@@ -8,10 +8,16 @@ export interface Draft { id:string; skillId:string; totalSeconds:number; segment
 export interface Achievement { id:string; skillId:string; skillName:string; level:MasteryLevel; targetHours:number; totalPracticeSeconds:number; sessionCount:number; completedAt:number; claimedAt:number|null }
 export interface Preferences { sounds:boolean; soundVolume:number; celebrations:boolean; theme:Theme }
 export interface CustomSoundInfo { name:string; type:string; size:number }
+export type MilestoneTier=25|50|100;
+export const milestoneTierFor=(reached:number[]):MilestoneTier|null=>reached.includes(100)?100:reached.includes(50)?50:reached.includes(25)?25:null;
+export interface MilestoneSoundInfo { name:string; type:string; size:number }
+export type MilestoneSoundInfoMap=Partial<Record<MilestoneTier,MilestoneSoundInfo>>;
+export interface MilestoneCelebrationSettings { bronze:boolean; silver:boolean; gold:boolean }
+export interface MilestoneDefaultAudioSettings { bronze:boolean; silver:boolean; gold:boolean }
 export type StreakMilestoneDays=3|7|30|100;
 export interface StreakReward { id:string; streakStartDate:string; earnedDate:string; milestoneDays:StreakMilestoneDays; bonusXp:number; notifiedAt:number|null }
-export interface AppData { skills:Skill[]; deletedSkills:Skill[]; sessions:Session[]; draft:Draft|null; pausedDrafts:Draft[]; achievements:Achievement[]; pendingCeremonyId:string|null; customSound:CustomSoundInfo|null; streakRewards:StreakReward[]; preferences:Preferences }
-export const emptyData=():AppData=>({skills:[],deletedSkills:[],sessions:[],draft:null,pausedDrafts:[],achievements:[],pendingCeremonyId:null,customSound:null,streakRewards:[],preferences:{sounds:true,soundVolume:.7,celebrations:true,theme:'inferno'}});
+export interface AppData { skills:Skill[]; deletedSkills:Skill[]; sessions:Session[]; draft:Draft|null; pausedDrafts:Draft[]; achievements:Achievement[]; pendingCeremonyId:string|null; customSound:CustomSoundInfo|null; milestoneSoundInfo:MilestoneSoundInfoMap; milestoneCelebrations:MilestoneCelebrationSettings; milestoneDefaultAudio:MilestoneDefaultAudioSettings; streakRewards:StreakReward[]; preferences:Preferences }
+export const emptyData=():AppData=>({skills:[],deletedSkills:[],sessions:[],draft:null,pausedDrafts:[],achievements:[],pendingCeremonyId:null,customSound:null,milestoneSoundInfo:{},milestoneCelebrations:{bronze:true,silver:true,gold:true},milestoneDefaultAudio:{bronze:false,silver:false,gold:false},streakRewards:[],preferences:{sounds:true,soundVolume:.7,celebrations:true,theme:'inferno'}});
 export const progress=(skill:Skill)=>Math.min(100,skill.targetSeconds?skill.practicedSeconds/skill.targetSeconds*100:0);
 export const remaining=(skill:Skill)=>Math.max(0,skill.targetSeconds-skill.practicedSeconds);
 export const fmt=(seconds:number,short=false)=>{const n=Math.max(0,Math.floor(seconds));const h=Math.floor(n/3600),m=Math.floor(n%3600/60),s=n%60;return short?`${h}h ${String(m).padStart(2,'0')}m`:`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`};

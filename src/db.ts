@@ -1,9 +1,9 @@
 import { openDB } from 'idb';
-import { emptyData, type AppData, type Draft, type Session, type Skill } from './domain';
+import { emptyData, type AppData, type Draft, type MilestoneTier, type Session, type Skill } from './domain';
 const DB_NAME='skill-mastery-timer', STORE='app', SOUND_STORE='sounds';
 export const MAX_CUSTOM_SOUND_BYTES=10*1024*1024;
 export const dbPromise=openDB(DB_NAME,6,{upgrade(db,oldVersion){if(oldVersion<1)db.createObjectStore(STORE);if(oldVersion<5)db.createObjectStore(SOUND_STORE)}});
-export async function loadData():Promise<AppData>{try{const data=await (await dbPromise).get(STORE,'state')??emptyData();return{...emptyData(),...data,deletedSkills:data.deletedSkills??[],pausedDrafts:data.pausedDrafts??[],streakRewards:data.streakRewards??[],customSound:data.customSound??null,preferences:{...emptyData().preferences,...data.preferences}}}catch(e){throw new Error(`Local data could not be read. Browser storage may be unavailable. ${String(e)}`)}}
+export async function loadData():Promise<AppData>{try{const defaults=emptyData(),data=await (await dbPromise).get(STORE,'state')??defaults;return{...defaults,...data,deletedSkills:data.deletedSkills??[],pausedDrafts:data.pausedDrafts??[],streakRewards:data.streakRewards??[],customSound:data.customSound??null,milestoneSoundInfo:data.milestoneSoundInfo??{},milestoneCelebrations:{...defaults.milestoneCelebrations,...data.milestoneCelebrations},milestoneDefaultAudio:{...defaults.milestoneDefaultAudio,...(data.milestoneDefaultAudio??{bronze:true,silver:true,gold:true})},preferences:{...defaults.preferences,...data.preferences}}}catch(e){throw new Error(`Local data could not be read. Browser storage may be unavailable. ${String(e)}`)}}
 export async function saveData(data:AppData){try{await (await dbPromise).put(STORE,data,'state')}catch(e){throw new Error(`Local data could not be saved. Check available browser storage. ${String(e)}`)}}
 export async function locked<T>(fn:()=>Promise<T>):Promise<T>{const locks=navigator.locks;if(locks)return locks.request('skill-mastery-timer-state',{mode:'exclusive'},fn);return fn()}
 export const channel=typeof BroadcastChannel!=='undefined'?new BroadcastChannel('skill-mastery-timer'):null;
@@ -14,3 +14,7 @@ export const newDraft=(skillId:string,now:number):Draft=>({id:crypto.randomUUID(
 export async function getCustomSound():Promise<Blob|null>{try{return(await(await dbPromise).get(SOUND_STORE,'celebration'))??null}catch(e){throw new Error(`Custom sound could not be read from local storage. ${String(e)}`)}}
 export async function putCustomSound(blob:Blob):Promise<void>{if(blob.size>MAX_CUSTOM_SOUND_BYTES)throw new Error('Audio file exceeds the 10 MB limit.');try{await(await dbPromise).put(SOUND_STORE,blob,'celebration')}catch(e){throw new Error(`Custom sound could not be saved locally. ${String(e)}`)}}
 export async function removeCustomSound():Promise<void>{try{await(await dbPromise).delete(SOUND_STORE,'celebration')}catch(e){throw new Error(`Custom sound could not be removed from local storage. ${String(e)}`)}}
+const milestoneSoundKey=(tier:MilestoneTier)=>`milestone-${tier}`;
+export async function getMilestoneSound(tier:MilestoneTier):Promise<Blob|null>{try{return(await(await dbPromise).get(SOUND_STORE,milestoneSoundKey(tier)))??null}catch(e){throw new Error(`Milestone sound could not be read from local storage. ${String(e)}`)}}
+export async function putMilestoneSound(tier:MilestoneTier,blob:Blob):Promise<void>{if(blob.size>MAX_CUSTOM_SOUND_BYTES)throw new Error('Audio file exceeds the 10 MB limit.');try{await(await dbPromise).put(SOUND_STORE,blob,milestoneSoundKey(tier))}catch(e){throw new Error(`Milestone sound could not be saved locally. ${String(e)}`)}}
+export async function removeMilestoneSound(tier:MilestoneTier):Promise<void>{try{await(await dbPromise).delete(SOUND_STORE,milestoneSoundKey(tier))}catch(e){throw new Error(`Milestone sound could not be removed from local storage. ${String(e)}`)}}

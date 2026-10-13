@@ -1,7 +1,7 @@
 ﻿import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Ceremony } from './ceremony';
-import type { Achievement } from './domain';
+import type { Achievement, MilestoneTier } from './domain';
 
 const achievement: Achievement = {
   id: 'ceremony-test', skillId: 'skill-test', skillName: 'Woodworking',
@@ -12,6 +12,9 @@ const achievement: Achievement = {
 function renderCeremony(preview: boolean) {
   return renderToStaticMarkup(<Ceremony achievement={achievement} sounds={false} volume={0} customSound={null} preview={preview} onClaim={() => undefined} onCancel={() => undefined} />);
 }
+function renderMilestone(tier: MilestoneTier, enabled = true) {
+  return renderToStaticMarkup(<Ceremony achievement={achievement} sounds={enabled} volume={0.7} customSound={null} preview milestoneTier={tier} tierEnabled={enabled} onClaim={() => undefined} onCancel={() => undefined} />);
+}
 
 describe('skill completion celebration', () => {
   it.each([true, false])('shows the motto and distinct achievement details (preview=%s)', (preview) => {
@@ -21,8 +24,20 @@ describe('skill completion celebration', () => {
     expect(html).toContain('ACQUIRED');
     expect(html).toContain('A SKILL');
     expect(html).toContain('Woodworking');
+    expect(html.match(/class="celebration-sparkle /g)).toHaveLength(22);
+    expect(html).toContain('class="ceremony-sparkles"');
     expect(html).toContain('MASTERY CATEGORY');
     expect(html).toContain('RECORDED PRACTICE');
     expect(html.includes('SAMPLE DATA')).toBe(preview);
+  });
+  it.each([[25, '25% MILESTONE'], [50, '50% MILESTONE'], [100, 'MASTERY']] as const)('renders the selected tier and bounded sparkle field (%i)', (tier, heading) => {
+    const html = renderMilestone(tier);
+    expect(html).toContain(`ceremony-tier-${tier}`);
+    expect(html).toContain(heading);
+    expect(html).toContain('Woodworking');
+    expect(html.match(/class="celebration-sparkle /g)).toHaveLength(22);
+  });
+  it('explains disabled milestone previews', () => {
+    expect(renderMilestone(50, false)).toContain('This milestone celebration is disabled in Settings.');
   });
 });
