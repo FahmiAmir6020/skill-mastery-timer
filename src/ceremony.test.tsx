@@ -37,6 +37,16 @@ describe('skill completion celebration', () => {
     expect(html).toContain('Woodworking');
     expect(html.match(/class="celebration-sparkle /g)).toHaveLength(22);
   });
+  it.each([
+    [25, 'MILESTONE AWARDED TO'],
+    [50, 'HONORED AND AWARDED TO'],
+    [100, 'THIS LEGENDARY ACHIEVEMENT IS BESTOWED UPON'],
+  ] as const)('shows the recipient signature for tier %i', (tier, awardHeading) => {
+    const html = renderMilestone(tier);
+    expect(html).toContain(awardHeading);
+    expect(html.match(/FAHMI AMIR/g)).toHaveLength(1);
+    expect(html).toContain(`recipient-award-${tier}`);
+  });
   it('explains disabled milestone previews', () => {
     expect(renderMilestone(50, false)).toContain('This milestone celebration is disabled in Settings.');
   });

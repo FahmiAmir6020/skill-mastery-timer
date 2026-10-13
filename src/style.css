@@ -197,3 +197,35 @@
 .ceremony-tier-100.phase-intro .ceremony-emblem-wrap{transform-origin:50% 50%;animation:gold-compression .58s cubic-bezier(.22,.75,.28,1) both}
 @keyframes gold-compression{0%{transform:scale(1);filter:brightness(1)}62%{transform:scale(.84);filter:brightness(1.38)}100%{transform:scale(1.08);filter:brightness(1.65)}}
 @media(prefers-reduced-motion:reduce){.ceremony-tier-100.phase-intro .ceremony-emblem-wrap{animation:none!important;filter:none}}
+
+/* Personalized award signatures for milestone celebrations */
+.recipient-award{position:relative;isolation:isolate;width:min(470px,100%);margin:clamp(15px,2.8vh,27px) auto 0;padding:clamp(11px,1.8vh,17px) clamp(12px,3vw,24px);text-align:center;border-top:1px solid #ffffff1c;border-bottom:1px solid #ffffff1c}
+.recipient-award small{display:block;margin:0 auto 8px;font-size:clamp(8px,1.2vw,10px);line-height:1.5;letter-spacing:.16em;color:#e9e5dfb8;text-wrap:balance}
+.recipient-award strong{display:block;line-height:1.15;text-wrap:balance}
+.recipient-award-25 strong{font-family:Georgia,'Times New Roman',serif;font-size:clamp(23px,4.2vw,34px);font-weight:600;letter-spacing:.11em;background:linear-gradient(180deg,#fff0d6 0%,#d99a61 34%,#a85d32 62%,#f0c091 83%,#9b512b 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 9px #c9794040)}
+.recipient-award-25{border-color:#d18b5944}
+.recipient-award-25::after{content:'✦  ·  ✦';position:absolute;right:4px;bottom:5px;color:#e6a26b77;font-size:9px;letter-spacing:.42em;pointer-events:none}
+.recipient-award-50{border-color:#dbeaff66;box-shadow:0 0 24px #dcecff0a}
+.recipient-award-50 strong{font-family:'Arial Narrow',Arial,sans-serif;font-size:clamp(22px,4.2vw,34px);font-weight:500;letter-spacing:clamp(.15em,1.5vw,.28em);background:linear-gradient(105deg,#a7b5c8 0%,#fff 19%,#8998ae 36%,#fff 52%,#bac9dc 68%,#fff 82%,#8796ad 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 10px #e8f4ff88);animation:recipient-silver-sweep 3s ease-in-out .65s infinite}
+.recipient-award-100{border-color:#ffe18c88;box-shadow:0 0 25px #ffcc4933, inset 0 0 25px #ffcc4910}
+.recipient-award-100 small{color:#fff0b8;font-size:clamp(8px,1.15vw,10px);letter-spacing:.14em;text-shadow:0 0 12px #ffce57aa}
+.recipient-award-100 strong{position:relative;font-family:Georgia,'Times New Roman',serif;font-size:clamp(29px,6vw,49px);font-weight:700;letter-spacing:clamp(.08em,.8vw,.16em);background:linear-gradient(180deg,#fffbe0 0%,#ffe47c 24%,#d89a20 48%,#fff3ad 66%,#ba7711 83%,#ffed9b 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 8px #ffd650cc) drop-shadow(0 0 25px #e99c3788);animation:recipient-gold-reveal .82s cubic-bezier(.16,.8,.2,1) 2.35s both}
+.recipient-award-100 strong::before,.recipient-award-100 strong::after{content:'✦';position:absolute;top:50%;color:#fff0a1;font-family:Georgia,serif;font-size:.28em;text-shadow:0 0 8px #ffdb56,0 0 18px #ffb526;animation:recipient-gold-spark 2.4s ease-in-out 2.55s infinite;pointer-events:none}
+.recipient-award-100 strong::before{left:2%;transform:translateY(-50%)}
+.recipient-award-100 strong::after{right:2%;transform:translateY(-50%);animation-delay:2.9s}
+@keyframes recipient-silver-sweep{0%,20%{background-position:100% 0}70%,100%{background-position:0 0}}
+@keyframes recipient-gold-reveal{0%{opacity:0;transform:translateY(14px) scale(.88);filter:brightness(2.2) drop-shadow(0 0 28px #ffe887)}65%{opacity:1;transform:translateY(-2px) scale(1.04)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes recipient-gold-spark{0%,100%{opacity:.48;filter:brightness(1)}50%{opacity:1;filter:brightness(1.8)}}
+@media(max-width:520px){.recipient-award{padding-left:8px;padding-right:8px}.recipient-award-50 strong{letter-spacing:.12em}.recipient-award-100 strong{letter-spacing:.07em}.recipient-award-100 small{max-width:30ch}}
+@media(prefers-reduced-motion:reduce){.recipient-award-50 strong,.recipient-award-100 strong,.recipient-award-100 strong::before,.recipient-award-100 strong::after{animation:none!important}.recipient-award-100 strong{opacity:1;transform:none}}
+/* Keep the modal viewport-sized; only its real content may scroll on short screens. */
+html:has(.ceremony-screen),body:has(.ceremony-screen),#root:has(.ceremony-screen){overflow:clip}
+.ceremony-screen{height:100vh;height:100dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:clamp(14px,2.6vh,30px) 18px;gap:10px}
+.ceremony-screen .ceremony-streaks{overflow:clip}
+.recipient-award{margin-top:8px;padding:7px 12px}
+.recipient-award small{margin-bottom:4px}
+.recipient-award-25 strong{font-size:clamp(23px,3.4vw,26px);letter-spacing:.083em}
+.recipient-award-50 strong{font-size:clamp(22px,3.4vw,26px);letter-spacing:clamp(.11em,1.05vw,.21em)}
+.recipient-award-100 strong{font-size:clamp(28px,4.4vw,37px);letter-spacing:clamp(.06em,.6vw,.12em)}
+@media(max-height:820px){.ceremony-screen{padding-top:clamp(12px,2.1vh,16px);padding-bottom:clamp(12px,2.1vh,16px);gap:8px}}
+@media(max-height:680px){.ceremony-screen{justify-content:flex-start}}
